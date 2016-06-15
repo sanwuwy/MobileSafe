@@ -1,0 +1,18 @@
+# ignore files
+.classpath
+.project
+*~
+*.log
+*.jks
+proguard-project.txt
+local.properties
+*.class
+*.apk
+*.ap_
+
+# ignore all files in the below directories
+.settings/
+bin/
+gen/
+log/
+tmp/

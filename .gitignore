@@ -9,6 +9,7 @@ local.properties
 *.class
 *.apk
 *.ap_
+*.gitattibutes
 
 # ignore all files in the below directories
 .settings/

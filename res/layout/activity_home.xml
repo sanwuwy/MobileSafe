@@ -5,8 +5,29 @@
     android:orientation="vertical" >
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="55dip"
+        android:background="#8866ff00"
+        android:gravity="center"
+        android:text="功能列表"
+        android:textColor="#000000"
+        android:textSize="22sp" />
+
+    <com.itheima.mobilesafe.ui.FocusedTextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="主界面" />
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:text=" 最新的手机卫士，快来下载啊，下载送好吃的，最新的手机卫士，快来下载啊，下载送好吃的"
+        android:textSize="18sp" />
+
+    <GridView
+        android:id="@+id/list_home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dip"
+        android:numColumns="3"
+        android:verticalSpacing="15dip" />
 
 </LinearLayout>

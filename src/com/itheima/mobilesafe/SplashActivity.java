@@ -1,5 +1,6 @@
 package com.itheima.mobilesafe;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -12,21 +13,30 @@ import org.json.JSONObject;
 import com.itheima.mobilesafe.utils.StreamTools;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import net.tsz.afinal.FinalHttp;
+import net.tsz.afinal.http.AjaxCallBack;
 
 public class SplashActivity extends Activity {
 
@@ -36,6 +46,9 @@ public class SplashActivity extends Activity {
     private static final int NETWORK_ERROR = 3;
     private static final int JSON_ERROR = 4;
     protected static final String TAG = "SplashActivity";
+    private String description;
+    private String apkurl;
+    private TextView tv_update_progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +56,22 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
         TextView tv_splash_version = (TextView) findViewById(R.id.tv_splash_version);
         tv_splash_version.setText("版本号：" + getVersion());
+        tv_update_progress = (TextView) findViewById(R.id.tv_update_progress);
+        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+        boolean update = sp.getBoolean("update", true);
+        if (update) {
+            // 检查升级
+            checkUpdate();
+        } else { // 自动升级已经关闭
+            handler.postDelayed(new Runnable() {
 
-        checkUpdate();
+                @Override
+                public void run() {
+                    // 进入主页面
+                    enterHome();
+                }
+            }, 2000);
+        }
         AlphaAnimation aa = new AlphaAnimation(0.2f, 1.0f);
         aa.setDuration(2000);
         RelativeLayout rl_root_splash = (RelativeLayout) findViewById(R.id.rl_root_splash);
@@ -60,6 +87,7 @@ public class SplashActivity extends Activity {
                 break;
             case SHOW_UPDATE_DIALOG: // 显示升级的对话框
                 Log.i(TAG, "显示升级的对话框");
+                showUpdateDialog();
                 break;
             case URL_ERROR: // URL错误
                 enterHome();
@@ -75,13 +103,109 @@ public class SplashActivity extends Activity {
                 break;
             }
         }
-
     };
 
+    /**
+     * 进入主界面
+     */
     private void enterHome() {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    /**
+     * 显示下载对话框
+     */
+    private void showUpdateDialog() {
+        AlertDialog.Builder builder = new Builder(this);
+        builder.setTitle("提示升级");
+        builder.setMessage(description);
+        // builder.setCancelable(false);//强制升级
+        builder.setOnCancelListener(new OnCancelListener() {
+
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                // 进入主页面
+                enterHome();
+                dialog.dismiss();
+
+            }
+        });
+        builder.setPositiveButton("立刻升级", new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 下载APK，替换升级
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    FinalHttp finalHttp = new FinalHttp();
+                    finalHttp.download(apkurl,
+                            Environment.getExternalStorageDirectory().getAbsolutePath() + "/MobileSafe.apk",
+                            new AjaxCallBack<File>() {
+
+                                @Override
+                                public void onFailure(Throwable t, int errorNo, String strMsg) {
+                                    Toast.makeText(SplashActivity.this, "APK下载失败", 1).show();
+                                    t.printStackTrace();
+                                    super.onFailure(t, errorNo, strMsg);
+                                }
+
+                                @Override
+                                public void onLoading(long count, long current) {
+                                    super.onLoading(count, current);
+                                    byte progress = (byte) (current / count * 100);
+                                    tv_update_progress.setVisibility(View.VISIBLE);
+                                    tv_update_progress.setText("下载进度：" + progress + "%");
+                                }
+
+                                @Override
+                                public void onSuccess(File file) {
+                                    super.onSuccess(file);
+                                    installAPK(file);
+                                }
+                            });
+                } else {
+                    Toast.makeText(getApplicationContext(), "没有检测到SD卡，请安装上SD卡后重试", 1).show();
+                    return;
+                }
+
+            }
+        });
+        builder.setNegativeButton("下次再说", new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 取消对话款，进入主界面
+                dialog.dismiss();
+                enterHome();
+            }
+        });
+        builder.show();
+    }
+
+    /**
+     * 安装APK
+     *
+     * @param file
+     */
+    private void installAPK(File file) {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        intent.addCategory("android.intent.category.DEFAULT");
+        Uri uri = Uri.fromFile(file);
+        Log.i(TAG, uri.toString()); // uri =
+                                    // file:///storage/sdcard/MobileSafe.apk
+        intent.setDataAndType(uri, "application/vnd.android.package-archive");
+        // 如果用户在 install APK 界面选择了 cancel，那么应该进入主界面
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0) {
+            enterHome();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -108,8 +232,8 @@ public class SplashActivity extends Activity {
                         JSONObject json = new JSONObject(result);
                         // 得到服务器端APK的版本信息
                         String version = (String) json.get("version");
-                        String description = (String) json.get("description");
-                        String apkurl = (String) json.get("apkurl");
+                        description = (String) json.get("description");
+                        apkurl = (String) json.get("apkurl");
 
                         if (getVersion().equals(version)) {
                             // 版本一致，没有新版本，进入主页面
@@ -158,24 +282,5 @@ public class SplashActivity extends Activity {
             e.printStackTrace();
             return "";
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.splash, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

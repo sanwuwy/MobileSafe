@@ -25,4 +25,17 @@
         android:layout_below="@id/tv_splash_version"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:visibility="invisible"
+        android:id="@+id/tv_update_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="下载进度：0%"
+        android:textColor="#99000000"
+        android:textSize="22sp" />
+
 </RelativeLayout>

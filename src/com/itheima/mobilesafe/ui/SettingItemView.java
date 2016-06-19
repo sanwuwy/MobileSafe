@@ -21,6 +21,9 @@ public class SettingItemView extends RelativeLayout {
     private TextView tv_desc;
     private TextView tv_title;
 
+    private  String desc_on;
+    private String desc_off;
+
     /**
      * 初始化布局文件
      *
@@ -36,19 +39,29 @@ public class SettingItemView extends RelativeLayout {
 
     }
 
+    /**
+     * 自己通过new SettingItemView(context) 创建该View对象的时候调用
+     * @param context
+     */
     public SettingItemView(Context context) {
         super(context);
         initView(context);
     }
 
     /**
-     * 默认使用的是这个构造方法
+     * 带有两个参数的构造方法，系统在加载布局文件的时候调用
+     *
      * @param context
      * @param attrs
      */
     public SettingItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context);
+        String title = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.itheima.mobilesafe", "title");
+        desc_on = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.itheima.mobilesafe", "desc_on");
+        desc_off = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.itheima.mobilesafe", "desc_off");
+        tv_title.setText(title);
+        setDesc(desc_off);
     }
 
     public SettingItemView(Context context, AttributeSet attrs, int defStyle) {
@@ -67,6 +80,11 @@ public class SettingItemView extends RelativeLayout {
      * 设置组合控件的状态
      */
     public void setChecked(boolean checked) {
+        if (checked) {
+            setDesc(desc_on);
+        } else {
+            setDesc(desc_off);
+        }
         cb_status.setChecked(checked);
     }
 

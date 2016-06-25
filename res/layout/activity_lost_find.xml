@@ -23,6 +23,7 @@
             android:textSize="20sp" />
 
         <TextView
+            android:id="@+id/tv_safeNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -44,6 +45,7 @@
         android:layout_height="40dip" >
 
         <TextView
+            android:id="@+id/tv_lock_context"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -54,6 +56,7 @@
             android:textSize="20sp" />
 
         <ImageView
+            android:id="@+id/iv_lock_state"
             android:layout_width="25dip"
             android:layout_height="25dip"
             android:layout_alignParentRight="true"

@@ -5,14 +5,8 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
-        android:layout_height="55dip"
-        android:background="#8866ff00"
-        android:gravity="center"
-        android:text="功能列表"
-        android:textColor="#000000"
-        android:textSize="22sp" />
+        style="@style/text_title_style"
+        android:text="功能列表" />
 
     <com.itheima.mobilesafe.ui.FocusedTextView
         android:layout_width="match_parent"

@@ -4,5 +4,7 @@
     <string name="app_name">MobileSafe</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="LockScreenReceiver_description">第一次运行的时候请赋予管理权限以便让一键锁屏可以正常工作。</string>
+    <string name="LockScreenReceiver">手机防盗数据保护</string>
 
 </resources>

@@ -57,6 +57,7 @@
         </receiver>
 
         <service android:name="com.itheima.mobilesafe.service.GPSService" />
+        <service android:name="com.itheima.mobilesafe.service.AddressService" />
 
         <!-- 设备管理器 -->
         <receiver

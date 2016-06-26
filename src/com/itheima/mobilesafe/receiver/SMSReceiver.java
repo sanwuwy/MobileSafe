@@ -66,7 +66,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         // 振动
                         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                         long[] pattern = { 200, 300, 400, 500 };
-                        vibrator.vibrate(pattern, 0);// 循环振动
+                        vibrator.vibrate(pattern, 0);// 0循环振动   -1不重复
 
                         abortBroadcast();
                     } else if ("#*wipedata*#".equals(body)) {

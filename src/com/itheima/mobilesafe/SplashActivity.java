@@ -1,6 +1,7 @@
 package com.itheima.mobilesafe;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -57,6 +58,8 @@ public class SplashActivity extends Activity {
         TextView tv_splash_version = (TextView) findViewById(R.id.tv_splash_version);
         tv_splash_version.setText("版本号：" + getVersion());
         tv_update_progress = (TextView) findViewById(R.id.tv_update_progress);
+        //拷贝数据库
+        copyDB();
         SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
         boolean update = sp.getBoolean("update", true);
         if (update) {
@@ -76,6 +79,30 @@ public class SplashActivity extends Activity {
         aa.setDuration(2000);
         RelativeLayout rl_root_splash = (RelativeLayout) findViewById(R.id.rl_root_splash);
         rl_root_splash.setAnimation(aa);
+    }
+
+    /**
+     * path 把address.db这个数据库拷贝到data/data/《包名》/files/address.db
+     */
+    private void copyDB() {
+        try {
+            File file = new File(getFilesDir(), "address.db");
+            if (file.exists()) {
+                Log.i(TAG, "数据库已存在，不需要拷贝了");
+            } else {
+                InputStream is = getAssets().open("address.db");
+                FileOutputStream fos = new FileOutputStream(file);
+                byte[] buffer = new byte[4 * 1024];
+                int len = -1;
+                while((len = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                }
+                is.close();
+                fos.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Handler handler = new Handler() {

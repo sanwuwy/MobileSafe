@@ -1,10 +1,13 @@
 package com.itheima.mobilesafe;
 
 import com.itheima.mobilesafe.service.AddressService;
+import com.itheima.mobilesafe.ui.SettingClickView;
 import com.itheima.mobilesafe.ui.SettingItemView;
 import com.itheima.mobilesafe.utils.ServiceUtils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -17,6 +20,8 @@ public class SettingActivity extends Activity {
     private SettingItemView siv_update;
     // 设置是否显示号码归属地
     private SettingItemView siv_show_address;
+    // 设置归属地提示框风格
+    private SettingClickView scv_changebg;
     private Intent showAddress;
     private SharedPreferences sp;
 
@@ -68,8 +73,37 @@ public class SettingActivity extends Activity {
                 }
             }
         });
-    }
 
+        scv_changebg = (SettingClickView) findViewById(R.id.scv_changebg);
+        final String[] items = { "半透明", "活力橙", "卫士蓝", "金属灰", "苹果绿" };
+        int which = sp.getInt("which", 0);
+        scv_changebg.setDesc(items[which]);
+        scv_changebg.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                builder.setTitle("归属地提示框风格");
+                int item = sp.getInt("which", 0);
+                builder.setSingleChoiceItems(items, item, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 保存背景风格
+                        Editor editor = sp.edit();
+                        editor.putInt("which", which);
+                        editor.commit();
+                        scv_changebg.setDesc(items[which]);
+
+                        // 取消对话框
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("取消", null);
+                builder.show();
+            }
+        });
+    }
 
     @Override
     protected void onStart() {

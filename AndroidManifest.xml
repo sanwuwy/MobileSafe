@@ -18,15 +18,22 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="com.itheima.mobilesafe" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+        <uses-library android:name="android.test.runner" />
+
         <activity
             android:name=".SplashActivity"
             android:label="@string/app_name" >
@@ -46,6 +53,7 @@
         <activity android:name="com.itheima.mobilesafe.SelectContactActivity" />
         <activity android:name="com.itheima.mobilesafe.AtoolsActivity" />
         <activity android:name="com.itheima.mobilesafe.NumberAddressQueryActivity" />
+        <activity android:name="com.itheima.mobilesafe.CallSmsSafeActivity" />
 
         <receiver android:name="com.itheima.mobilesafe.receiver.BootCompleteReceiver" >
             <intent-filter>
@@ -60,6 +68,7 @@
 
         <service android:name="com.itheima.mobilesafe.service.GPSService" />
         <service android:name="com.itheima.mobilesafe.service.AddressService" />
+        <service android:name="com.itheima.mobilesafe.service.CallSmsSafeService" />
 
         <!-- 设备管理器 -->
         <receiver

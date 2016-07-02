@@ -30,6 +30,7 @@ public class HomeActivity extends Activity {
     protected static final String TAG = "HomeActivity";
     private GridView list_home;
     private SharedPreferences sp;
+    private Intent intent;
 
     private static String [] names = {
             "手机防盗","通讯卫士","软件管理",
@@ -55,16 +56,20 @@ public class HomeActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
-                case 8: // 进入设置中心
-                    Intent settingIntent = new Intent(HomeActivity.this, SettingActivity.class);
-                    startActivity(settingIntent);
-                    break;
-                case 0: //进入手机防盗页面
+                case 0: // 进入手机防盗页面
                     showLostFindDialog();
                     break;
+                case 1: // 进入黑名单拦截界面
+                    intent = new Intent(HomeActivity.this, CallSmsSafeActivity.class);
+                    startActivity(intent);
+                    break;
                 case 7:// 进入高级工具
-                    Intent atoolsIntent = new Intent(HomeActivity.this, AtoolsActivity.class);
-                    startActivity(atoolsIntent);
+                    intent = new Intent(HomeActivity.this, AtoolsActivity.class);
+                    startActivity(intent);
+                    break;
+                case 8: // 进入设置中心
+                    intent = new Intent(HomeActivity.this, SettingActivity.class);
+                    startActivity(intent);
                     break;
                 }
             }

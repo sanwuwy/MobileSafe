@@ -1,6 +1,7 @@
 package com.itheima.mobilesafe;
 
 import com.itheima.mobilesafe.service.AddressService;
+import com.itheima.mobilesafe.service.CallSmsSafeService;
 import com.itheima.mobilesafe.ui.SettingClickView;
 import com.itheima.mobilesafe.ui.SettingItemView;
 import com.itheima.mobilesafe.utils.ServiceUtils;
@@ -20,9 +21,13 @@ public class SettingActivity extends Activity {
     private SettingItemView siv_update;
     // 设置是否显示号码归属地
     private SettingItemView siv_show_address;
+    private Intent showAddress;
     // 设置归属地提示框风格
     private SettingClickView scv_changebg;
-    private Intent showAddress;
+    // 设置黑名单拦截
+    private SettingItemView siv_callsms_safe;
+    private Intent callSmsSafeIntent;
+
     private SharedPreferences sp;
 
     @Override
@@ -59,6 +64,7 @@ public class SettingActivity extends Activity {
         });
 
         siv_show_address = (SettingItemView) findViewById(R.id.siv_show_address);
+        showAddress = new Intent(this, AddressService.class);
         siv_show_address.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -103,19 +109,39 @@ public class SettingActivity extends Activity {
                 builder.show();
             }
         });
+
+        siv_callsms_safe = (SettingItemView) findViewById(R.id.siv_callsms_safe);
+        callSmsSafeIntent = new Intent(this, CallSmsSafeService.class);
+        siv_callsms_safe.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (siv_callsms_safe.isChecked()) {
+                    // 变为非选中状态
+                    siv_callsms_safe.setChecked(false);
+                    stopService(callSmsSafeIntent);
+                } else {
+                    siv_callsms_safe.setChecked(true);
+                    startService(callSmsSafeIntent);
+                }
+            }
+        });
     }
 
     @Override
     protected void onStart() {
         super.onResume();
-        showAddress = new Intent(this, AddressService.class);
-        boolean isServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
+        boolean isAddressServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
                 "com.itheima.mobilesafe.service.AddressService");
-        if (isServiceRunning) {
+        if (isAddressServiceRunning) {
             siv_show_address.setChecked(true);
         } else {
             siv_show_address.setChecked(false);
         }
+
+        boolean iscallSmsServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
+                "com.itheima.mobilesafe.service.CallSmsSafeService");
+        siv_callsms_safe.setChecked(iscallSmsServiceRunning);
     }
 
 }

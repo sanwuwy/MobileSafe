@@ -60,6 +60,7 @@
         <activity android:name="com.itheima.mobilesafe.AtoolsActivity" />
         <activity android:name="com.itheima.mobilesafe.NumberAddressQueryActivity" />
         <activity android:name="com.itheima.mobilesafe.CallSmsSafeActivity" />
+        <activity android:name="com.itheima.mobilesafe.AppManagerActivity" />
 
         <receiver android:name="com.itheima.mobilesafe.receiver.BootCompleteReceiver" >
             <intent-filter>

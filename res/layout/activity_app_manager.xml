@@ -57,8 +57,19 @@
         <ListView
             android:id="@+id/lv_app_manager"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="fill_parent"
+            android:overScrollMode="never" >
         </ListView>
+
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/tv_status"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ff888888"
+            android:text=" 用户程序：6个"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
     </FrameLayout>
 
 </LinearLayout>

@@ -6,9 +6,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -78,6 +80,53 @@ public class HomeActivity extends Activity {
                 }
             }
         });
+        installShortCut();
+    }
+
+    /**
+     * 创建快捷图标
+     */
+    private void installShortCut() {
+        boolean shortcut = sp.getBoolean("shortcut", false);
+        if (shortcut)
+            return;
+        Builder builder = new AlertDialog.Builder(HomeActivity.this);
+        builder.setTitle("创建图标");
+        builder.setMessage("是否创建桌面快捷图标？");
+        builder.setCancelable(false);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 发送广播的意图， 大吼一声告诉桌面，要创建快捷图标了
+                Intent intent = new Intent();
+                intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                // 快捷方式 要包含3个重要的信息 1，名称 2.图标 3.干什么事情
+                intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "手机小卫士");
+                intent.putExtra(Intent.EXTRA_SHORTCUT_ICON,
+                        BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+                // 桌面点击图标对应的意图。
+                Intent shortcutIntent = new Intent();
+                shortcutIntent.setAction("android.intent.action.MAIN");
+                shortcutIntent.addCategory("android.intent.category.LAUNCHER");
+                shortcutIntent.setClassName(getPackageName(), "com.itheima.mobilesafe.SplashActivity");
+                // shortcutIntent.setAction("com.itheima.xxxx");
+                // shortcutIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+                sendBroadcast(intent);
+                Editor editor = sp.edit();
+                editor.putBoolean("shortcut", true);
+                editor.commit();
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     private void showLostFindDialog() {

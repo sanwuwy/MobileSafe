@@ -47,6 +47,7 @@ public class SplashActivity extends Activity {
     private static final int NETWORK_ERROR = 3;
     private static final int JSON_ERROR = 4;
     protected static final String TAG = "SplashActivity";
+    SharedPreferences sp = null;
     private String description;
     private String apkurl;
     private TextView tv_update_progress;
@@ -54,13 +55,13 @@ public class SplashActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         setContentView(R.layout.activity_splash);
         TextView tv_splash_version = (TextView) findViewById(R.id.tv_splash_version);
         tv_splash_version.setText("版本号：" + getVersion());
         tv_update_progress = (TextView) findViewById(R.id.tv_update_progress);
         //拷贝数据库
         copyDB();
-        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
         boolean update = sp.getBoolean("update", true);
         if (update) {
             // 检查升级

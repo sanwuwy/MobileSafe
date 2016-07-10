@@ -15,11 +15,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,19 +32,91 @@ public class CallSmsSafeActivity extends Activity {
     private static final String TAG = "CallSmsSafeActivity";
 
     private ListView lv_callsms_safe;
+    private LinearLayout ll_loading;
     private BlackNumberDao dao;
     private List<BlackNumberInfo> infos;
     private CallSmsSafeAdapter adapter;
+
+    private int offset = 0;
+    private int maxnumber = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call_sms_safe);
         lv_callsms_safe = (ListView) findViewById(R.id.lv_callsms_safe);
+        ll_loading = (LinearLayout) findViewById(R.id.ll_loading);
         dao = new BlackNumberDao(CallSmsSafeActivity.this);
-        infos = dao.findAll();
-        adapter = new CallSmsSafeAdapter();
-        lv_callsms_safe.setAdapter(adapter);
+        fillData();
+
+        // listview注册一个滚动事件的监听器。
+        lv_callsms_safe.setOnScrollListener(new OnScrollListener() {
+
+            // 当滚动的状态发生变化的时候。滚动过程中的状态变化，一般是：手指触摸状态 -> 惯性滑行状态 -> 空闲状态
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                case OnScrollListener.SCROLL_STATE_IDLE: // 空闲状态
+                    // 判断当前listview滚动的位置
+                    // 获取最后一个可见条目在集合里面的位置。
+                    int lastposition = lv_callsms_safe.getLastVisiblePosition();
+
+                    // 集合里面有20个item 位置从0开始的 最后一个条目的位置 19
+                    if (lastposition == (infos.size() - 1)) {
+                        System.out.println("列表被移动到了最后一个位置，加载更多的数据。。。");
+                        offset += maxnumber;
+                        fillData();
+                    }
+                    break;
+                case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL: // 手指触摸滚动
+                    break;
+                case OnScrollListener.SCROLL_STATE_FLING: // 惯性滑行状态
+                    break;
+                }
+            }
+
+            // 滚动的时候调用的方法。
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+
+        });
+    }
+
+    /**
+     * 查询数据是一个耗时的操作，需要在子线程中进行
+     */
+    private void fillData() {
+        ll_loading.setVisibility(View.VISIBLE);
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (infos == null || infos.size() == 0) {
+                    infos = dao.findPart(offset, maxnumber);
+                } else {// 原来已经加载过数据了。
+                    infos.addAll(dao.findPart(offset, maxnumber));
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ll_loading.setVisibility(View.INVISIBLE);
+                        if (adapter == null) {
+                            adapter = new CallSmsSafeAdapter();
+                            lv_callsms_safe.setAdapter(adapter);
+                        } else {
+                            // 通知ListView改变数据
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            };
+        }.start();
     }
 
     private class CallSmsSafeAdapter extends BaseAdapter {

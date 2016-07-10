@@ -21,4 +21,30 @@
         android:textColor="#000000"
         android:textSize="22sp" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_marginTop="10dip"
+        android:clickable="true"
+        android:drawableLeft="@android:drawable/ic_menu_search"
+        android:gravity="center_vertical"
+        android:onClick="smsBackup"
+        android:text="短信的备份"
+        android:textColor="#000000"
+        android:textSize="22sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_marginTop="10dip"
+        android:clickable="true"
+        android:drawableLeft="@android:drawable/ic_menu_search"
+        android:gravity="center_vertical"
+        android:onClick="smsRestore"
+        android:text="短信的还原"
+        android:textColor="#000000"
+        android:textSize="22sp" />
+
 </LinearLayout>

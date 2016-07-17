@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialLayout="@layout/process_widget"
+    android:minHeight="72.0dip"
+    android:minWidth="294.0dip"
+    android:updatePeriodMillis="1800000" />
+
+<!-- updatePeriodMillis是设置widget的更新间隔时间，但是即使设置为0，最少也是半小时更新一次。 -->

@@ -33,6 +33,7 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
 
     <application
         android:allowBackup="true"
@@ -62,6 +63,8 @@
         <activity android:name="com.itheima.mobilesafe.NumberAddressQueryActivity" />
         <activity android:name="com.itheima.mobilesafe.CallSmsSafeActivity" />
         <activity android:name="com.itheima.mobilesafe.AppManagerActivity" />
+        <activity android:name="com.itheima.mobilesafe.TaskManagerActivity" />
+        <activity android:name="com.itheima.mobilesafe.TaskSettingActivity" />
 
         <receiver android:name="com.itheima.mobilesafe.receiver.BootCompleteReceiver" >
             <intent-filter>
@@ -77,6 +80,7 @@
         <service android:name="com.itheima.mobilesafe.service.GPSService" />
         <service android:name="com.itheima.mobilesafe.service.AddressService" />
         <service android:name="com.itheima.mobilesafe.service.CallSmsSafeService" />
+        <service android:name="com.itheima.mobilesafe.service.AutoCleanService" />
 
         <!-- 设备管理器 -->
         <receiver

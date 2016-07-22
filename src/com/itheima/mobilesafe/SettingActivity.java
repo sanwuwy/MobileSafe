@@ -2,6 +2,7 @@ package com.itheima.mobilesafe;
 
 import com.itheima.mobilesafe.service.AddressService;
 import com.itheima.mobilesafe.service.CallSmsSafeService;
+import com.itheima.mobilesafe.service.WatchDogService;
 import com.itheima.mobilesafe.ui.SettingClickView;
 import com.itheima.mobilesafe.ui.SettingItemView;
 import com.itheima.mobilesafe.utils.ServiceUtils;
@@ -28,6 +29,10 @@ public class SettingActivity extends Activity {
     private SettingItemView siv_callsms_safe;
     private Intent callSmsSafeIntent;
 
+    // 程序锁看门狗设置
+    private SettingItemView siv_watchdog;
+    private Intent watchDogIntent;
+
     private SharedPreferences sp;
 
     @Override
@@ -35,8 +40,26 @@ public class SettingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        siv_update = (SettingItemView) findViewById(R.id.siv_update);
 
+        // 程序锁设置
+        siv_watchdog = (SettingItemView) findViewById(R.id.siv_watchdog);
+        watchDogIntent = new Intent(this, WatchDogService.class);
+        siv_watchdog.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (siv_watchdog.isChecked()) {
+                    // 变为非选中状态
+                    siv_watchdog.setChecked(false);
+                    stopService(watchDogIntent);
+                } else {
+                    // 选择状态
+                    siv_watchdog.setChecked(true);
+                    startService(watchDogIntent);
+                }
+            }
+        });
+
+        siv_update = (SettingItemView) findViewById(R.id.siv_update);
         boolean update = sp.getBoolean("update", true);
         if (update) {
             // 自动升级已经开启
@@ -142,6 +165,10 @@ public class SettingActivity extends Activity {
         boolean iscallSmsServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
                 "com.itheima.mobilesafe.service.CallSmsSafeService");
         siv_callsms_safe.setChecked(iscallSmsServiceRunning);
+
+        boolean iswatchdogServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
+                "com.itheima.mobilesafe.service.WatchDogService");
+        siv_watchdog.setChecked(iswatchdogServiceRunning);
     }
 
 }

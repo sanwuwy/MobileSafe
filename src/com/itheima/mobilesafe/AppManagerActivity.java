@@ -3,6 +3,7 @@ package com.itheima.mobilesafe;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.itheima.mobilesafe.db.dao.ApplockDao;
 import com.itheima.mobilesafe.domain.AppInfo;
 import com.itheima.mobilesafe.engine.AppInfoProvider;
 import com.itheima.mobilesafe.utils.DensityUtil;
@@ -28,6 +29,7 @@ import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -90,10 +92,13 @@ public class AppManagerActivity extends Activity implements OnClickListener {
      */
     private AppInfo appInfo;
 
+    private ApplockDao dao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_manager);
+        dao = new ApplockDao(this);
         tv_avail_rom = (TextView) findViewById(R.id.tv_avail_rom);
         tv_avail_sd = (TextView) findViewById(R.id.tv_avail_sd);
         tv_status = (TextView) findViewById(R.id.tv_status);
@@ -182,7 +187,35 @@ public class AppManagerActivity extends Activity implements OnClickListener {
                 contentView.startAnimation(set);
             }
         });
-
+        // 程序锁 设置条目长点击的事件监听器
+        lv_app_manager.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    return true;
+                } else if (position == (userAppInfos.size() + 1)) {
+                    return true;
+                } else if (position <= userAppInfos.size()) {// 用户程序
+                    int newposition = position - 1;
+                    appInfo = userAppInfos.get(newposition);
+                } else {// 系统程序
+                    int newposition = position - 1 - userAppInfos.size() - 1;
+                    appInfo = systemAppInfos.get(newposition);
+                }
+                ViewHolder holder = (ViewHolder) view.getTag();
+                // 判断条目是否存在在程序锁数据库里面
+                if (dao.find(appInfo.getPackname())) {
+                    // 被锁定的程序，解除锁定，更新界面为打开的小锁图片
+                    dao.delete(appInfo.getPackname());
+                    holder.iv_status.setImageResource(R.drawable.unlock);
+                } else {
+                    // 锁定程序，更新界面为关闭的锁
+                    dao.add(appInfo.getPackname());
+                    holder.iv_status.setImageResource(R.drawable.lock);
+                }
+                return true;
+            }
+        });
     }
 
     protected void dismissPopupWindow() {
@@ -277,6 +310,7 @@ public class AppManagerActivity extends Activity implements OnClickListener {
                 holder.iv_icon = (ImageView) view.findViewById(R.id.iv_app_icon);
                 holder.tv_location = (TextView) view.findViewById(R.id.tv_app_location);
                 holder.tv_name = (TextView) view.findViewById(R.id.tv_app_name);
+                holder.iv_status = (ImageView) view.findViewById(R.id.iv_status);
                 view.setTag(holder);
             }
             holder.iv_icon.setImageDrawable(appInfo.getIcon());
@@ -285,6 +319,11 @@ public class AppManagerActivity extends Activity implements OnClickListener {
                 holder.tv_location.setText("手机内存");
             } else {
                 holder.tv_location.setText("外部存储");
+            }
+            if (dao.find(appInfo.getPackname())) {
+                holder.iv_status.setImageResource(R.drawable.lock);
+            } else {
+                holder.iv_status.setImageResource(R.drawable.unlock);
             }
             return view;
         }
@@ -305,6 +344,7 @@ public class AppManagerActivity extends Activity implements OnClickListener {
         TextView tv_name;
         TextView tv_location;
         ImageView iv_icon;
+        ImageView iv_status;
     }
 
     /**

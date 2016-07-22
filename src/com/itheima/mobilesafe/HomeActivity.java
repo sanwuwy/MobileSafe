@@ -77,6 +77,10 @@ public class HomeActivity extends Activity {
                     intent = new Intent(HomeActivity.this, TrafficManagerActivity.class);
                     startActivity(intent);
                     break;
+                case 5:// 流量管理器
+                    intent = new Intent(HomeActivity.this, AntiVirusActivity.class);
+                    startActivity(intent);
+                    break;
                 case 7:// 进入高级工具
                     intent = new Intent(HomeActivity.this, AtoolsActivity.class);
                     startActivity(intent);
@@ -187,7 +191,7 @@ public class HomeActivity extends Activity {
                 if (password.equals(password_confirm)) {
                     // 一致的话，就保存密码，把对话框消掉，还要进入手机防盗页面
                     Editor editor = sp.edit();
-                    editor.putString("password", MD5Utils.md5Password(password));// 保存加密后的密码
+                    editor.putString("password", MD5Utils.encode(password));// 保存加密后的密码
                     editor.commit();
                     dialog.dismiss();
                     Log.i(TAG, "进入手机防盗页面");
@@ -239,7 +243,7 @@ public class HomeActivity extends Activity {
                 }
 
                 String savePassword = sp.getString("password", "");// 取出加密后的密码
-                if (MD5Utils.md5Password(password).equals(savePassword)) {
+                if (MD5Utils.encode(password).equals(savePassword)) {
                     // 输入的密码是我之前设置的密码
                     // 把对话框消掉，进入主页面；
                     dialog.dismiss();

@@ -70,6 +70,8 @@
             android:excludeFromRecents="true"
             android:launchMode="singleInstance" />
         <activity android:name="com.itheima.mobilesafe.TrafficManagerActivity" />
+        <activity android:name="com.itheima.mobilesafe.AntiVirusActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
 
         <receiver android:name="com.itheima.mobilesafe.receiver.BootCompleteReceiver" >
             <intent-filter>

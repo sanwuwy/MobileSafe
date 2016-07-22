@@ -11,7 +11,7 @@ public class MD5Utils {
      * @param password
      * @return
      */
-    public static String md5Password(String password) {
+    public static String encode(String password) {
 
         try {
             // 得到一个信息摘要器

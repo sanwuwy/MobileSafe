@@ -67,4 +67,7 @@
         <item name="android:textColor">#ff000000</item>
     </style>
 
+    <style name="progress_style" parent="@android:style/Widget.ProgressBar.Horizontal">
+          <item name="android:progressDrawable">@drawable/progress_horizontal</item>
+    </style>
 </resources>

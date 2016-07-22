@@ -61,7 +61,8 @@ public class SplashActivity extends Activity {
         tv_splash_version.setText("版本号：" + getVersion());
         tv_update_progress = (TextView) findViewById(R.id.tv_update_progress);
         //拷贝数据库
-        copyDB();
+        copyDB("address.db");
+        copyDB("antivirus.db");
         boolean update = sp.getBoolean("update", true);
         if (update) {
             // 检查升级
@@ -85,13 +86,13 @@ public class SplashActivity extends Activity {
     /**
      * path 把address.db这个数据库拷贝到data/data/《包名》/files/address.db
      */
-    private void copyDB() {
+    private void copyDB(String path) {
         try {
-            File file = new File(getFilesDir(), "address.db");
+            File file = new File(getFilesDir(), path);
             if (file.exists()) {
                 Log.i(TAG, "数据库已存在，不需要拷贝了");
             } else {
-                InputStream is = getAssets().open("address.db");
+                InputStream is = getAssets().open(path);
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] buffer = new byte[4 * 1024];
                 int len = -1;

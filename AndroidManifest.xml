@@ -69,6 +69,7 @@
         <activity android:name="com.itheima.mobilesafe.EnterPwdActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance" />
+        <activity android:name="com.itheima.mobilesafe.TrafficManagerActivity" />
 
         <receiver android:name="com.itheima.mobilesafe.receiver.BootCompleteReceiver" >
             <intent-filter>

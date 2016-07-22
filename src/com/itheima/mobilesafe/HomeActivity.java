@@ -77,8 +77,12 @@ public class HomeActivity extends Activity {
                     intent = new Intent(HomeActivity.this, TrafficManagerActivity.class);
                     startActivity(intent);
                     break;
-                case 5:// 流量管理器
+                case 5:// 安全管理器
                     intent = new Intent(HomeActivity.this, AntiVirusActivity.class);
+                    startActivity(intent);
+                    break;
+                case 6:// 缓存管理器
+                    intent = new Intent(HomeActivity.this, SystemOptActivity.class);
                     startActivity(intent);
                     break;
                 case 7:// 进入高级工具

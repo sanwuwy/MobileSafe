@@ -71,7 +71,7 @@ public class AntiVirusActivity extends Activity {
                         Signature signature = packinfo.signatures[0];
                         boolean isvirus = false;
                         String md5 = MD5Utils.encode(signature.toCharsString());
-                        System.out.println("packname = " + packinfo.applicationInfo.packageName + ", md5 = " + md5);
+                        System.out.println("packname = " + packinfo.packageName + ", md5 = " + md5);
                         String result = AntivirusDao.findVirus(md5);
                         if (!TextUtils.isEmpty(result)) {
                             // 记录下来这个病毒信息 通知界面更新内容

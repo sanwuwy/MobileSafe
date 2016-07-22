@@ -27,6 +27,16 @@ public class AppInfo {
      */
     private boolean userApp;
 
+    private String receivername;
+
+    public String getReceivername() {
+        return receivername;
+    }
+
+    public void setReceivername(String receivername) {
+        this.receivername = receivername;
+    }
+
     public Drawable getIcon() {
         return icon;
     }
